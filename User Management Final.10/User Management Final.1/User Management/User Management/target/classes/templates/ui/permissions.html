@@ -1,0 +1,33 @@
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::main})}">
+<main>
+  <h1 class="page-title">Update Permissions</h1>
+  <p class="page-subtitle">Assign or change the user's role.</p>
+
+  <form class="card grid" th:action="@{/ui/permissions}" method="post" th:if="${user != null}">
+    <input type="hidden" name="id" th:value="${user.id}" />
+    <div class="field">
+      <label class="label" for="role">Role</label>
+      <select class="select" id="role" name="role" required>
+        <option th:selected="${user.role == 'PASSENGER'}" value="PASSENGER">Passenger</option>
+        <option th:selected="${user.role == 'GUIDE'}" value="GUIDE">Guide</option>
+        <option th:selected="${user.role == 'ADMIN'}" value="ADMIN">Admin</option>
+      </select>
+      <div class="helper">Roles can control access to features like bookings and administration.</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn" type="submit" onclick="showToast('Permissions updated');">Save Changes</button>
+      <a class="btn secondary" th:href="@{/ui/profile(q=${user.id})}">Back to Profile</a>
+    </div>
+  </form>
+  
+  <div class="card" th:if="${user == null}">
+    <h3>User Not Found</h3>
+    <p class="helper">No user was found with the provided ID.</p>
+    <div class="btn-row">
+      <a class="btn" th:href="@{/ui}">Back to Dashboard</a>
+    </div>
+  </div>
+</main>
+</html>
+
+

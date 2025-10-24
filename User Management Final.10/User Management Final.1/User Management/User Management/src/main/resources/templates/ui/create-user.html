@@ -1,0 +1,55 @@
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::main})}">
+<main>
+  <h1 class="page-title">Create User</h1>
+  <p class="page-subtitle">Add a new user account to the system.</p>
+
+  <form class="grid" th:action="@{/ui/create}" method="post" onsubmit="showToast('User created');">
+    <div class="grid cols-2">
+      <div class="field">
+        <label class="label" for="name">Full Name</label>
+        <input class="input" id="name" name="name" type="text" placeholder="Jane Doe" required />
+      </div>
+      <div class="field">
+        <label class="label" for="email">Email</label>
+        <input class="input" id="email" name="email" type="email" placeholder="jane@example.com" required />
+        <span class="helper">Use a valid email. A confirmation may be sent.</span>
+      </div>
+    </div>
+
+    <div class="grid cols-2">
+      <div class="field">
+        <label class="label" for="phone">Phone</label>
+        <input class="input" id="phone" name="phone" type="tel" placeholder="+94 77 123 4567" />
+      </div>
+      <div class="field">
+        <label class="label" for="role">Role</label>
+        <select class="select" id="role" name="role" required>
+          <option value="PASSENGER">Passenger</option>
+          <option value="GUIDE">Guide</option>
+          <option value="ADMIN">Admin</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid cols-2">
+      <div class="field">
+        <label class="label" for="password">Password</label>
+        <input class="input" id="password" name="password" type="password" placeholder="••••••••" required minlength="8" />
+        <span class="helper">At least 8 characters, include numbers and letters.</span>
+      </div>
+      <div class="field">
+        <label class="label" for="confirmPassword">Confirm Password</label>
+        <input class="input" id="confirmPassword" name="confirmPassword" type="password" placeholder="••••••••" required />
+        <span class="helper">Must match the password.</span>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" type="submit">Create</button>
+      <a class="btn secondary" th:href="@{/ui}">Cancel</a>
+    </div>
+  </form>
+</main>
+</html>
+
+

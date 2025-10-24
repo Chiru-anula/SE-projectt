@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boat Safari - User Management</title>
+    <meta name="theme-color" content="#1e90ff">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e90ff 0%, #00bfff 100%);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(30, 144, 255, 0.3);
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-primary {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #ff5252;
+            transform: translateY(-1px);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, rgba(30, 144, 255, 0.9), rgba(0, 191, 255, 0.8)),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><path d="M0,300 Q300,200 600,300 T1200,300 L1200,600 L0,600 Z" fill="%23f0f8ff"/></svg>');
+            background-size: cover;
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .btn-cta {
+            background: linear-gradient(135deg, #ff9a56 0%, #ffad56 100%);
+            color: white;
+            font-size: 1.1rem;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            box-shadow: 0 8px 25px rgba(255, 154, 86, 0.4);
+        }
+
+        .btn-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(255, 154, 86, 0.5);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: #1e90ff;
+            margin-bottom: 1rem;
+        }
+
+        .section-title p {
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        /* User Management Section */
+        .user-actions {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 3rem;
+            gap: 1rem;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        /* User Grid */
+        .user-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .user-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #1e90ff, #00bfff);
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e90ff, #00bfff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .user-info h3 {
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+            color: #333;
+        }
+
+        .user-info p {
+            text-align: center;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-role {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 1rem auto;
+            display: block;
+            text-align: center;
+            width: fit-content;
+        }
+
+        .role-admin { background: #ffe1e1; color: #d32f2f; }
+        .role-guide { background: #fff3e0; color: #f57c00; }
+        .role-passenger { background: #e8f5e8; color: #388e3c; }
+
+        .user-actions-card {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            border-radius: 15px;
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #d32f2f;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: scale(0.7);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-header h2 {
+            color: #1e90ff;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #1e90ff;
+            box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .hero p { font-size: 1.1rem; }
+            .nav { flex-direction: column; gap: 1rem; text-align: center; }
+            .user-grid { grid-template-columns: 1fr; }
+            .user-actions { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                🚤 Boat Safari
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#tours">Tours</a></li>
+                <li><a href="#destinations">Destinations</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <a href="#" class="btn btn-outline">Login</a>
+                <a href="#" class="btn btn-primary">Sign Up</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Welcome to Boat Safari!</h1>
+            <p>Experience the best boat tours and adventures in the most beautiful waters. Get the best experience around Sri Lanka</p>
+            <a href="#users" class="btn btn-cta">Explore Our Tours</a>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <section id="users" class="user-management">
+            <div class="section-title">
+                <h2>Our Team Members</h2>
+                <p>Meet our experienced guides and staff who make your boat safari unforgettable</p>
+            </div>
+
+            <div class="user-actions">
+                <button class="btn btn-success" onclick="openCreateModal()">Add New Team Member</button>
+            </div>
+
+            <div class="user-grid" id="userGrid">
+                <!-- Users will be loaded here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Create User Modal -->
+    <div id="createModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Team Member</h2>
+                <p>Enter the details for the new team member</p>
+            </div>
+            <form id="createUserForm">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" name="phone" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="role">Role</label>
+                    <select id="role" name="role" class="form-control" required>
+                        <option value="PASSENGER">Passenger</option>
+                        <option value="GUIDE">Guide</option>
+                        <option value="ADMIN">Admin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" required minlength="8">
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeCreateModal()">Cancel</button>
+                    <button type="submit" class="btn btn-success">Create Member</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Team Member</h2>
+                <p>Update the team member's information</p>
+            </div>
+            <form id="editUserForm">
+                <input type="hidden" id="editUserId" name="id">
+                <div class="form-group">
+                    <label for="editName">Full Name</label>
+                    <input type="text" id="editName" name="name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEmail">Email</label>
+                    <input type="email" id="editEmail" name="email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="editPhone">Phone</label>
+                    <input type="tel" id="editPhone" name="phone" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="editRole">Role</label>
+                    <select id="editRole" name="role" class="form-control" required>
+                        <option value="PASSENGER">Passenger</option>
+                        <option value="GUIDE">Guide</option>
+                        <option value="ADMIN">Admin</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete User Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Remove Team Member</h2>
+                <p>Are you sure you want to remove this team member?</p>
+            </div>
+            <div id="deleteUserInfo">
+                <!-- User info will be inserted here -->
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentDeleteUserId = null;
+
+        // Load users when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUsers();
+            setupFormValidation();
+        });
+
+        function loadUsers() {
+            // Try to load from API first
+            fetch('/api/users')
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('API not available');
+                })
+                .then(users => {
+                    if (users && Array.isArray(users) && users.length > 0) {
+                        displayUsers(users);
+                    } else {
+                        // If no users in database, show sample data
+                        addSampleUsers();
+                    }
+                })
+                .catch(error => {
+                    console.log('Using sample data due to API error:', error);
+                    addSampleUsers();
+                });
+        }
+
+        function addSampleUsers() {
+            const sampleUsers = [
+                { id: 1, name: 'Captain James Rodriguez', email: 'james@boatsafari.com', phone: '+94 77 123 4567', role: 'ADMIN' },
+                { id: 2, name: 'Sarah Chen', email: 'sarah@boatsafari.com', phone: '+94 77 234 5678', role: 'GUIDE' },
+                { id: 3, name: 'Mike Thompson', email: 'mike@boatsafari.com', phone: '+94 77 345 6789', role: 'GUIDE' },
+                { id: 4, name: 'Emma Wilson', email: 'emma@boatsafari.com', phone: '+94 77 456 7890', role: 'PASSENGER' }
+            ];
+            displayUsers(sampleUsers);
+        }
+
+        function displayUsers(users) {
+            const userGrid = document.getElementById('userGrid');
+            userGrid.innerHTML = '';
+            
+            users.forEach(user => {
+                const userCard = createUserCard(user);
+                userGrid.appendChild(userCard);
+            });
+        }
+
+        function createUserCard(user) {
+            const card = document.createElement('div');
+            card.className = 'user-card';
+            card.innerHTML = `
+                <div class="user-avatar">${getInitials(user.name)}</div>
+                <div class="user-info">
+                    <h3>${user.name}</h3>
+                    <p>📧 ${user.email}</p>
+                    <p>📞 ${user.phone || 'N/A'}</p>
+                    <span class="user-role role-${user.role.toLowerCase()}">${formatRole(user.role)}</span>
+                </div>
+                <div class="user-actions-card">
+                    <button class="btn btn-primary btn-sm" onclick="editUser(${user.id})">Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="openDeleteModal(${user.id}, '${user.name}')">Remove</button>
+                </div>
+            `;
+            return card;
+        }
+
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        }
+
+        function formatRole(role) {
+            switch(role) {
+                case 'ADMIN': return '👑 Captain';
+                case 'GUIDE': return '🧭 Guide';
+                case 'PASSENGER': return '👤 Tourist';
+                default: return role;
+            }
+        }
+
+        // Modal functions
+        function openCreateModal() {
+            document.getElementById('createModal').classList.add('show');
+        }
+
+        function closeCreateModal() {
+            document.getElementById('createModal').classList.remove('show');
+            document.getElementById('createUserForm').reset();
+        }
+
+        function openDeleteModal(userId, userName) {
+            currentDeleteUserId = userId;
+            document.getElementById('deleteUserInfo').innerHTML = `
+                <p style="text-align: center; font-size: 1.1rem; margin: 2rem 0;">
+                    <strong>${userName}</strong> will be permanently removed from the team.
+                </p>
+            `;
+            document.getElementById('deleteModal').classList.add('show');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('show');
+            currentDeleteUserId = null;
+        }
+
+        function confirmDelete() {
+            if (currentDeleteUserId) {
+                // Try to delete via API
+                fetch(`/ui/delete`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `id=${currentDeleteUserId}`
+                })
+                .then(response => {
+                    if (response.ok) {
+                        showToast('Team member removed successfully!');
+                        loadUsers();
+                    } else {
+                        showToast('Unable to remove via API, removing from display');
+                        removeUserFromDisplay(currentDeleteUserId);
+                    }
+                })
+                .catch(error => {
+                    console.log('API error, removing from display:', error);
+                    removeUserFromDisplay(currentDeleteUserId);
+                    showToast('Team member removed from display');
+                });
+            }
+            closeDeleteModal();
+        }
+
+        function removeUserFromDisplay(userId) {
+            const userCards = document.querySelectorAll('.user-card');
+            userCards.forEach(card => {
+                const deleteBtn = card.querySelector('.btn-danger');
+                if (deleteBtn && deleteBtn.onclick.toString().includes(userId)) {
+                    card.remove();
+                }
+            });
+        }
+
+        function setupFormValidation() {
+            // Create user form
+            const createForm = document.getElementById('createUserForm');
+            createForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                if (password !== confirmPassword) {
+                    showToast('Passwords do not match!');
+                    return;
+                }
+
+                const formData = new FormData(createForm);
+                
+                // Try to create via API
+                fetch('/api/users', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (response.ok) {
+                        showToast('Team member created successfully!');
+                        closeCreateModal();
+                        // Reload users from database after successful creation
+                        setTimeout(() => loadUsers(), 100);
+                    } else {
+                        response.text().then(text => {
+                            console.log('Server error:', text);
+                            showToast('Error creating user - please try again');
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.log('API error:', error);
+                    showToast('Network error - please check your connection');
+                });
+            });
+
+            // Edit user form
+            const editForm = document.getElementById('editUserForm');
+            editForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const userId = document.getElementById('editUserId').value;
+                const formData = new FormData(editForm);
+                
+                // Try to update via API
+                fetch(`/api/users/${userId}`, {
+                    method: 'PUT',
+                    body: formData
+                })
+                .then(response => {
+                    if (response.ok) {
+                        showToast('Team member updated successfully!');
+                        closeEditModal();
+                        // Reload users from database after successful update
+                        setTimeout(() => loadUsers(), 100);
+                    } else {
+                        response.text().then(text => {
+                            console.log('Server error:', text);
+                            showToast('Error updating user - please try again');
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.log('API error:', error);
+                    showToast('Network error - please check your connection');
+                });
+            });
+        }
+
+        function createUserLocally(formData) {
+            const newUser = {
+                id: Date.now(),
+                name: formData.get('name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                role: formData.get('role')
+            };
+            
+            const userGrid = document.getElementById('userGrid');
+            const userCard = createUserCard(newUser);
+            userGrid.appendChild(userCard);
+            
+            showToast('Team member added to display!');
+            closeCreateModal();
+        }
+
+        function editUser(userId) {
+            // Fetch user data and populate edit form
+            fetch(`/api/users/search?q=${userId}`)
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('User not found');
+                })
+                .then(user => {
+                    // Populate edit form
+                    document.getElementById('editUserId').value = user.id;
+                    document.getElementById('editName').value = user.name;
+                    document.getElementById('editEmail').value = user.email;
+                    document.getElementById('editPhone').value = user.phone || '';
+                    document.getElementById('editRole').value = user.role;
+                    
+                    // Show edit modal
+                    document.getElementById('editModal').classList.add('show');
+                })
+                .catch(error => {
+                    console.log('Error fetching user:', error);
+                    showToast('Error loading user data');
+                });
+        }
+
+        function openEditModal(user) {
+            document.getElementById('editUserId').value = user.id;
+            document.getElementById('editName').value = user.name;
+            document.getElementById('editEmail').value = user.email;
+            document.getElementById('editPhone').value = user.phone || '';
+            document.getElementById('editRole').value = user.role;
+            document.getElementById('editModal').classList.add('show');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('show');
+            document.getElementById('editUserForm').reset();
+        }
+
+        function showToast(message) {
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #4CAF50, #45a049);
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 10px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+                z-index: 9999;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
+            toast.textContent = message;
+            
+            document.body.appendChild(toast);
+            
+            // Animate in
+            setTimeout(() => {
+                toast.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+        // Close modals when clicking outside
+        window.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                closeCreateModal();
+                closeEditModal();
+                closeDeleteModal();
+            }
+        });
+    </script>
+</body>
+</html>

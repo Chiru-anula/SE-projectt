@@ -1,0 +1,51 @@
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::main})}">
+<main>
+  <h1 class="page-title">User Profile</h1>
+  <p class="page-subtitle">View basic details and manage account.</p>
+
+  <div class="card" th:if="${user != null}">
+    <div class="grid cols-2">
+      <div>
+        <div class="field">
+          <span class="label">Name</span>
+          <div th:text="${user.name}">Jane Doe</div>
+        </div>
+        <div class="field">
+          <span class="label">Email</span>
+          <div th:text="${user.email}">jane@example.com</div>
+        </div>
+      </div>
+      <div>
+        <div class="field">
+          <span class="label">Phone</span>
+          <div th:text="${user.phone} ?: '—'">+94 77 123 4567</div>
+        </div>
+        <div class="field">
+          <span class="label">Role</span>
+          <div>
+            <span class="badge" th:classappend="${user.role == 'ADMIN'} ? ' danger' : (${user.role == 'GUIDE'} ? ' warn' : ' success')" th:text="${user.role}">PASSENGER</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="btn-row">
+      <a class="btn" th:href="@{/ui/permissions(id=${user.id})}">Update Permissions</a>
+      <form th:action="@{/ui/delete}" method="get" style="display:inline">
+        <input type="hidden" name="id" th:value="${user.id}" />
+        <button class="btn danger" type="submit">Delete Account</button>
+      </form>
+    </div>
+  </div>
+  
+  <div class="card" th:if="${user == null}">
+    <h3>User Not Found</h3>
+    <p class="helper">No user was found with the provided ID or email.</p>
+    <div class="btn-row">
+      <a class="btn" th:href="@{/ui}">Back to Dashboard</a>
+    </div>
+  </div>
+</main>
+</html>
+
+

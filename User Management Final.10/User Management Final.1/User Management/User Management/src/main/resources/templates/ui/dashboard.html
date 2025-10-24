@@ -1,0 +1,67 @@
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::main})}">
+<main>
+  <h1 class="page-title">User Dashboard</h1>
+  <p class="page-subtitle">Manage users for the Boat Safari Trip Management System.</p>
+
+  <div class="grid cols-2">
+    <div class="card">
+      <h3>Create a new user</h3>
+      <p class="helper">Add an account for a passenger, guide, or admin.</p>
+      <div class="spacer"></div>
+      <a class="btn" th:href="@{/ui/create}">Create User</a>
+    </div>
+
+    <div class="card">
+      <h3>Find a profile</h3>
+      <p class="helper">Search by email or user id to view profile.</p>
+      <div class="spacer"></div>
+      <form id="searchForm" class="grid" th:action="@{/ui/profile}" method="get">
+        <div class="field">
+          <label class="label" for="q">Email or User ID</label>
+          <input class="input" id="q" name="q" type="text" placeholder="user@example.com or 123" />
+        </div>
+        <div class="btn-row">
+          <button class="btn" type="submit">View Profile</button>
+        </div>
+      </form>
+      <div id="userFinderResult" class="spacer"></div>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+
+  <div class="card">
+    <h3>Recent users</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="u : ${recentUsers}">
+          <td th:text="${u.id}">1</td>
+          <td th:text="${u.name}">John Doe</td>
+          <td th:text="${u.email}">john@example.com</td>
+          <td>
+            <span class="badge" th:classappend="${u.role == 'ADMIN'} ? ' danger' : (${u.role == 'GUIDE'} ? ' warn' : ' success')" th:text="${u.role}">PASSENGER</span>
+          </td>
+          <td>
+            <a class="btn secondary" th:href="@{/ui/profile(q=${u.id})}">Open</a>
+          </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(recentUsers)}">
+          <td colspan="5" class="helper">No recent users found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <script th:src="@{/js/user-finder.js}"></script>
+</main>
+</html>
+
+

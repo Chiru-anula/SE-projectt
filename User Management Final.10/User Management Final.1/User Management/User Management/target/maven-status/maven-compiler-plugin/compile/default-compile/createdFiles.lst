@@ -1,0 +1,9 @@
+com\example\user_management\domain\Role.class
+com\example\user_management\repo\AppUserRepository.class
+com\example\user_management\config\SecurityConfig.class
+com\example\user_management\domain\AppUser.class
+com\example\user_management\web\dto\UserDto.class
+com\example\user_management\service\UserService.class
+com\example\user_management\web\UserUiController.class
+com\example\user_management\config\DataInitializer.class
+com\example\user_management\UserManagementApplication.class

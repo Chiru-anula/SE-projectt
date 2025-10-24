@@ -1,0 +1,26 @@
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::main})}">
+<main>
+  <h1 class="page-title">Delete Account</h1>
+  <p class="page-subtitle">This action cannot be undone.</p>
+
+  <div class="card" th:if="${user != null}">
+    <p>Are you sure you want to delete the account for <strong th:text="${user.name}">Jane Doe</strong>?</p>
+    <div class="spacer"></div>
+    <form th:action="@{/ui/delete}" method="post" class="btn-row">
+      <input type="hidden" name="id" th:value="${user.id}" />
+      <button class="btn danger" type="submit" data-confirm-delete>Delete</button>
+      <a class="btn secondary" th:href="@{/ui/profile(q=${user.id})}">Cancel</a>
+    </form>
+  </div>
+  
+  <div class="card" th:if="${user == null}">
+    <h3>User Not Found</h3>
+    <p class="helper">No user was found with the provided ID.</p>
+    <div class="btn-row">
+      <a class="btn" th:href="@{/ui}">Back to Dashboard</a>
+    </div>
+  </div>
+</main>
+</html>
+
+
